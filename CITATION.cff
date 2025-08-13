@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use this code or data, please cite it."
+authors:
+  - family-names: Sosna
+    given-names: Lukas
+title: "sparc-compactness: Reproducible pipeline for 'Characteristic Compactness of Disk Galaxies'"
+version: v1.0.0-paper
+license: MIT
+repository-code: "https://github.com/LSosna/sparc-compactness"
+keywords: [SPARC, galaxies, rotation-curves, MOND, BTFR, RAR, compactness, MNRAS]
