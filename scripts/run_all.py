@@ -6,8 +6,7 @@ from src.compute_compactness import compute_lambda
 def main():
     # Load constants
     with open("config.yaml") as f:
-        cfg = yaml.safe_load(f)
-    C = cfg["constants"]
+        C = yaml.safe_load(f)["constants"]
     G    = float(C["G_m3kg1s2"])
     c    = float(C["c_ms"])
     Msun = float(C["Msun_kg"])
