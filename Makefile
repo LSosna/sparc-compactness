@@ -1,19 +1,19 @@
-.PHONY: all env run samples stats fit clean
+.PHONY: env run samples stats fit all
 
 env:
-\tpip install -r requirements.txt
+	pip install -r requirements.txt
 
 run:
-\tPYTHONPATH=. python scripts/run_all.py
+	PYTHONPATH=. python scripts/run_all.py
 
 samples:
-\tPYTHONPATH=. python scripts/make_samples.py
+	PYTHONPATH=. python scripts/make_samples.py
 
 stats:
-\tPYTHONPATH=. python scripts/summary_stats.py
+	PYTHONPATH=. python scripts/summary_stats.py
 
 fit:
-\tPYTHONPATH=. python scripts/fit_mass_compactness.py
+	PYTHONPATH=. python scripts/fit_mass_compactness.py
 
 all: env run samples stats fit
-\t@echo "Done. See outputs/summary/ and outputs/tables/"
+	@echo "Done. See outputs/summary/ and outputs/tables/"
