@@ -1,12 +1,11 @@
-# Python & OS cruft
 __pycache__/
 *.pyc
 .DS_Store
 
-# Ignore everything in outputs by default…
+# ignore everything under outputs…
 outputs/*
 
-# …but keep reviewer-friendly artifacts:
+# …but keep reviewer-facing artifacts:
 !outputs/summary/
 !outputs/summary/*.json
 !outputs/tables/
