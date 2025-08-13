@@ -1,3 +1,6 @@
+mkdir -p .github/workflows
+
+cat > .github/workflows/ci.yml <<'YAML'
 name: Reproduce pipeline
 
 on:
@@ -13,14 +16,20 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+
       - name: Install deps
         run: pip install -r requirements.txt
+
       - name: Run pipeline
         run: |
           PYTHONPATH=. python scripts/run_all.py
           PYTHONPATH=. python scripts/make_samples.py
           PYTHONPATH=. python scripts/summary_stats.py
           PYTHONPATH=. python scripts/fit_mass_compactness.py
+
+      - name: Run tests
+        run: pytest -q
+
       - name: Upload artifacts (summary + tables)
         uses: actions/upload-artifact@v4
         with:
@@ -29,3 +38,8 @@ jobs:
             outputs/summary/*.json
             outputs/tables/*CLEAN_*.csv
             outputs/tables/SPARC_lambda_quickcheck.csv
+YAML
+
+git add .github/workflows/ci.yml
+git commit -m "Fix CI workflow YAML; run pipeline + tests and upload artifacts"
+git push
