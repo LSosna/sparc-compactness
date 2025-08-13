@@ -1,26 +1,43 @@
-import os, yaml
-from src.parse_sparc import parse_table1
-from src.compute_compactness import compute_lambda
+import os
+import requests
+from tqdm import tqdm
 
-def main():
-    # Load constants from config.yaml
-    C = yaml.safe_load(open("config.yaml"))["constants"]
-    G    = float(C["G_m3kg1s2"])
-    c    = float(C["c_ms"])
-    Msun = float(C["Msun_kg"])
-    kpc  = float(C["kpc_m"])
+# Directory to save the data
+output_dir = "data/raw"
 
-    # Parse SPARC + compute compactness λ
-    tab1 = compute_lambda(parse_table1("data/raw/SPARC_Lelli2016c.mrt.txt"),
-                          G=G, c=c, Msun=Msun, kpc=kpc)
+# URLs for the SPARC data files
+urls = {
+    "SPARC_Lelli2016c.mrt.txt": "http://astroweb.cwru.edu/SPARC/data/Lelli2016c/SPARC_Lelli2016c.mrt.txt",
+    "MassModels_Lelli2016c.mrt.txt": "http://astroweb.cwru.edu/SPARC/data/Lelli2016c/MassModels/MassModels_Lelli2016c.mrt.txt",
+}
 
-    # Reviewer-facing quick table
-    os.makedirs("outputs/tables", exist_ok=True)
-    cols = ["Galaxy", "Mbar_Msun", "Reff_kpc", "lambda"]
-    tab1[cols].to_csv("outputs/tables/SPARC_lambda_quickcheck.csv", index=False)
-
-    print(f"rows={len(tab1)}; median λ={tab1['lambda'].median():.3e}; "
-          "wrote outputs/tables/SPARC_lambda_quickcheck.csv")
+def download_file(url, filepath):
+    """Downloads a file with a progress bar."""
+    try:
+        response = requests.get(url, stream=True)
+        response.raise_for_status()
+        total_size = int(response.headers.get('content-length', 0))
+        with open(filepath, 'wb') as file, tqdm(
+            desc=os.path.basename(filepath),
+            total=total_size,
+            unit='iB',
+            unit_scale=True,
+        ) as bar:
+            for data in response.iter_content(chunk_size=1024):
+                bar.update(len(data))
+                file.write(data)
+    except requests.exceptions.RequestException as e:
+        print(f"Error downloading {url}: {e}")
+        if os.path.exists(filepath):
+            os.remove(filepath)
 
 if __name__ == "__main__":
-    main()
+    os.makedirs(output_dir, exist_ok=True)
+    for filename, url in urls.items():
+        filepath = os.path.join(output_dir, filename)
+        if not os.path.exists(filepath):
+            print(f"Downloading {filename}...")
+            download_file(url, filepath)
+        else:
+            print(f"'{filename}' already exists. Skipping.")
+    print("\nData download process finished.")
