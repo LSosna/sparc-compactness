@@ -1,4 +1,3 @@
-cat > scripts/run_all.py <<'PY'
 import os, yaml
 import pandas as pd
 from src.parse_sparc import parse_table1
@@ -23,8 +22,8 @@ def main():
     cols = ["Galaxy","Mbar_Msun","Reff_kpc","lambda"]
     tab1[cols].to_csv("outputs/tables/SPARC_lambda_quickcheck.csv", index=False)
 
-    print(f"rows={len(tab1)}; median λ={tab1['lambda'].median():.3e}; wrote outputs/tables/SPARC_lambda_quickcheck.csv")
+    print(f"rows={len(tab1)}; median λ={tab1['lambda'].median():.3e}; "
+          "wrote outputs/tables/SPARC_lambda_quickcheck.csv")
 
 if __name__ == "__main__":
     main()
-PY
