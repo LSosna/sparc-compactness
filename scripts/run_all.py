@@ -7,7 +7,7 @@ from src.parse_sparc import parse_table1, parse_massmodels
 from src.compute_compactness import compute_lambda
 
 def _find_name_column(df):
-    # Try common variants used in SPARC parsers
+    # Common variants used in SPARC tables/parsers
     candidates = {"galaxy","name","galname","object","id"}
     for col in df.columns:
         if str(col).strip().lower() in candidates:
@@ -26,17 +26,13 @@ def main():
 
     # --- Read SPARC tables ---
     tab1 = parse_table1("data/raw/SPARC_Lelli2016c.mrt.txt")
-    # mass models not used here, but keep the call if you want to validate availability:
-    # mm   = parse_massmodels("data/raw/MassModels_Lelli2016c.mrt.txt")
+    # Optional sanity: mm = parse_massmodels("data/raw/MassModels_Lelli2016c.mrt.txt")
 
-    # --- Compute compactness (coercion handled in compute_lambda) ---
+    # --- Compute compactness ---
     tab1 = compute_lambda(tab1, G=G, c=c, Msun=Msun, kpc=kpc)
 
-    # --- Choose a sensible name column if available ---
+    # --- Choose a name column if present ---
     name_col = _find_name_column(tab1)
-    if name_col is None:
-        print("NOTE: No obvious name column found. Available columns:\n", list(tab1.columns))
-
     cols = [c for c in [name_col, "Mbar_Msun", "Reff_kpc", "lambda"] if c and c in tab1.columns]
     out = tab1[cols].copy() if cols else tab1[["Mbar_Msun","Reff_kpc","lambda"]].copy()
 
